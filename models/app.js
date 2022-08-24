@@ -14,5 +14,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.tutorials = require("../models/vehicles")(sequelize, Sequelize);
+db.vehicles = require("../models/vehicles")(sequelize, Sequelize);
+db.vehicleInformation = require("../models/vehicle_information")(sequelize, Sequelize);
 module.exports = db; 

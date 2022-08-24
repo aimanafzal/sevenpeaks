@@ -19,6 +19,7 @@ db.sequelize.sync({ force: true })
 });
 
 app.use('/api', routes);
+app.use('db', db);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server is running on port ${process.env.PORT}`);
