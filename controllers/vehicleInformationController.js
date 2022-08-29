@@ -35,26 +35,25 @@ exports.findAll = (req, res) => {
   
 };
 // Find a single record with an id
-exports.findOne = (req, res) => {
-	exports.findOne = (req, res) => {
-		const id = req.params.id;
-		vehicleInformation.findByPk(id)
-		  .then(data => {
-			if (data) {
-			  res.send(data);
-			} else {
-			  res.status(404).send({
-				message: `Cannot find Tutorial with id=${id}.`
-			  });
-			}
-		  })
-		  .catch(err => {
-			res.status(500).send({
-			  message: "Error retrieving Tutorial with id=" + id
-			});
-		  });
-	  };
-};
+
+// exports.findOne = (req, res) => {
+// 	const id = req.params.id;
+// 	vehicleInformation.findByPk(id)
+// 		.then(data => {
+// 		if (data) {
+// 			res.send(data);
+// 		} else {
+// 			res.status(404).send({
+// 			message: `Cannot find Tutorial with id=${id}.`
+// 			});
+// 		}
+// 		})
+// 		.catch(err => {
+// 			res.status(500).send({
+// 				message: "Error retrieving Tutorial with id=" + id
+// 			});
+// 		});
+// 	};
 // Update a vehicleInformation by the id in the request
 exports.update = (req, res) => {
 	const id = req.params.id;
@@ -103,9 +102,5 @@ exports.delete = (req, res) => {
 };
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-  
-};
-// Find all published Tutorials
-exports.findAllPublished = (req, res) => {
   
 };

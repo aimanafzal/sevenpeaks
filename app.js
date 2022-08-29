@@ -4,9 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
 
-const vehicleModel = require('./models/vehicles');
-const vehicleInformationModel = require('./models/vehicle_information');
-const db = require('./models/app');
+const db = require('./models');
 
 app.use(bodyParser.json());
 
@@ -19,7 +17,6 @@ db.sequelize.sync({ force: true })
 });
 
 app.use('/api', routes);
-app.use('db', db);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server is running on port ${process.env.PORT}`);

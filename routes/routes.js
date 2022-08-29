@@ -1,9 +1,8 @@
 const express 		= require('express');
 const app 			= express();
-
-app.get('/', (req, res) => {
-	console.log('Hello World');
-	res.send('Hello World!');
+const vehicle = require('../controllers/vehicleController')
+app.post('/register_vehicle', async(req, res) => {
+	await vehicle.create(req, res);
 });
 
 app.get('/get', (req, res) => {
