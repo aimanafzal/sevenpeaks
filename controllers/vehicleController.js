@@ -1,4 +1,5 @@
 const {toLatLon, toLatitudeLongitude, headingDistanceTo, moveTo, insidePolygon } = require('geolocation-utils');
+const { random } = require('lodash');
 const { vehicle } = require('../models');
 const db = require("../models");
 
@@ -21,38 +22,42 @@ exports.create = async(req, res) => {
     registration_number: req.body.registration_number,
     vehicle_type: req.body.vehicle_type,
   };
-
-  console.log(toLatLon([4, 51]))                        
-  // { lat: 51, lon: 4 }
-  console.log(toLatitudeLongitude({ lat: 51, lng: 4 })) 
-  // { latitude: 51, longitude: 4 }
+  var randomNumber1 = random(100, true);
+  var randomNumber2 = random(100, true);
+  var latlong = { lat: randomNumber1, lng: randomNumber2 };
+  var tolatLong = toLatitudeLongitude(latlong);
 
   // calculate the distance between locations, move to a new location
-  const location1 = {lat: 51, lon: 4}
-  const location2 = {lat: 51.001, lon: 4.001 }
-  console.log(headingDistanceTo(location1, location2)) 
-  // { 
-  //   heading: 32.182377166258156,  // degrees
-  //   distance: 131.52837683622332  // meters
-  // }
-  console.log(moveTo(location1, {heading: 32.1, distance: 131.5}))
-
+  console.log(headingDistanceTo(tolatLong.latitude, tolatLong.longitude)); 
   
   // Save the vehicle in the database
   try {
+
     var created = await vehicles.create(vehicle);
-
-    var vehicleInformation = vehicle_information.create();
-
     if ( created ) {
       
       var latestRecord = this.getLatestRecord();
       const {id, registration_number, vehicle_type} = latestRecord;
-      console.log(id, registration_number, vehicle_type);
-      res.status(200).send({
-        message: 'Vehicle Registered Successfully!',
-      })
-
+      var metadata = {
+        "id": id, 
+        "registration_number": registration_number, 
+        "vehicle_type": vehicle_type,
+        "current_longitude" : tolatLong.longitude,
+        "current_latitude" : tolatLong.latitude,
+        "previous_longitude": latlong.lng,
+        "previous_latitude": latlong.lat
+      }
+      console.log(metadata);
+      var vehicleInformation = vehicle_information.create(metadata);
+      if ( vehicleInformation)
+        res.status(200).send({
+          message: 'Vehicle Registered Successfully!',
+        })
+      else {
+        res.status(500).send({
+          message: 'Vehicle could not be registered!'
+        })
+      }
     }
   } catch (error) {
     res.status(500).send({
@@ -60,6 +65,10 @@ exports.create = async(req, res) => {
     })
   }
 };
+
+this.getLatestLocation = async () => {
+
+}
 
 this.getLatestRecord = async () => {
   const latest = await vehicle.find().sort({ $natural: -1 }).limit(1);
