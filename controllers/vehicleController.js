@@ -7,6 +7,11 @@ const vehicles = db.vehicle;
 const vehicle_information = db.vehicle_Information;
 // const Op = db.Sequelize.Op;
 
+this.getNewLocation = () =>{
+  var randomNumber1 = random(100, true);
+  var randomNumber2 = random(100, true);
+  return { lat: randomNumber1, lng: randomNumber2 };
+}
 
 // Register a vehicle
 exports.create = async(req, res) => {
@@ -22,13 +27,12 @@ exports.create = async(req, res) => {
     registration_number: req.body.registration_number,
     vehicle_type: req.body.vehicle_type,
   };
-  var randomNumber1 = random(100, true);
-  var randomNumber2 = random(100, true);
-  var latlong = { lat: randomNumber1, lng: randomNumber2 };
-  var tolatLong = toLatitudeLongitude(latlong);
+  
+  var latlong = this.getNewLocation();
+  var tolatLong = toLatitudeLongitude(latlong) ;
 
   // calculate the distance between locations, move to a new location
-  console.log(headingDistanceTo(tolatLong.latitude, tolatLong.longitude)); 
+  // console.log(headingDistanceTo(tolatLong.latitude, tolatLong.longitude)); 
   
   // Save the vehicle in the database
   try {
@@ -66,12 +70,8 @@ exports.create = async(req, res) => {
   }
 };
 
-this.getLatestLocation = async () => {
-
-}
-
 this.getLatestRecord = async () => {
-  const latest = await vehicle.find().sort({ $natural: -1 }).limit(1);
+  const latest = await vehicles.find().sort({ $natural: -1 }).limit(1);
   return latest;
 }
 
@@ -98,7 +98,7 @@ exports.findOne = (req, res) => {
 // Update a Vehicle by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-  Tutorial.update(req.body, {
+  vehicle.update(req.body, {
     where: { id: id }
   })
     .then(num => {
@@ -118,3 +118,18 @@ exports.update = (req, res) => {
       });
     });
 };
+
+exports.deleteAll = async (req, res) => {
+  try {
+    var deleted = await vehicle.deleteMany ();  
+    if ( deleted ){
+      res.status(200).send ({
+        message: `Entire record deleted!`
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: error.message
+    });
+  } 
+}
